@@ -1,0 +1,302 @@
+finish
+/clear
+
+/prep7
+
+resume, probka_05, db
+
+
+
+ALLSEL
+
+
+*get, maks, kp, 0, num, max
+
+KWPAVE, gorny
+
+CSYS, wp
+K, maks+1, 1, 0, 0
+*get, gorny2, kp, 0, num, max
+
+
+
+CSYS, 0
+KSEL, s, loc, x, w+5
+KSEL, r, loc, y, 1.25*h-0.03, 1.25*h+0.01
+
+
+
+*get, gsrodkowy, kp, 0, num, max
+
+KWPAVE, gsrodkowy
+
+
+
+CSYS, wp
+
+K, maks+2, 1, 0, 0
+
+*get, gsrodkowy2, kp, 0, num, max
+
+ALLSEL
+
+LSTR, gsrodkowy, gsrodkowy2
+LSTR, gsrodkowy2, gorny2
+LSTR, gorny, gorny2
+
+CSYS, 0
+
+LSEL, s, loc, x, w+5, w+6
+
+CSYS, wp
+
+LSEL, r, loc, y, 0, 2*h
+
+
+
+LGLUE, all
+
+AL, all
+
+
+
+!-------druga area -----------
+
+!NUMCMP, kp
+*get, maks, kp, 0, num, max
+
+
+
+CSYS, 0
+KSEL, s, loc, x, w+5
+KSEL, r, loc, y, h/2-0.01, h/2+0.01
+
+*get, srodkowy, kp, 0, num, max
+
+CSYS, wp
+
+KWPAVE, srodkowy
+
+K, maks+1, 1, 0, 0
+
+*get, srodkowy2, kp, 0, num, max
+
+ALLSEL
+
+NUMCMP, line
+
+LSTR, srodkowy, srodkowy2
+*get, dolna, line, 0, num, max
+LSTR, srodkowy2, gsrodkowy2
+
+
+
+KWPAVE, gsrodkowy
+LSEL, s, loc, x, 0, 1
+LSEL, r, loc, y, 0, -0.75*h+0.01
+LSEL, a, line,, dolna
+
+LGLUE, all
+
+AL, all
+
+
+
+
+!-------- trzecia area--------
+
+ALLSEL
+
+!NUMCMP, kp
+*get, maks, kp, 0, num, max
+
+CSYS, 0
+KSEL, s, loc, x, w+5
+KSEL, r, loc, y, -0.25*h-0.0154, -0.25*h+0.0155
+
+
+*get, dsrodkowy, kp, 0, num, max
+
+CSYS, wp
+
+KWPAVE, dsrodkowy
+
+K, maks+1, 1, 0, 0
+
+*get, dsrodkowy2, kp, 0, num, max
+
+ALLSEL
+
+LSTR, dsrodkowy, dsrodkowy2
+LSTR, dsrodkowy2, srodkowy2
+
+KSEL, s, kp,, srodkowy2
+*get, gora, kp, 0, mxloc, y
+KSEL, s, kp,, dsrodkowy2
+*get, dol, kp, 0, mnloc, y 
+
+LSEL, s, loc, x, 0, 1
+LSEL, r, loc, y, dol, gora
+
+LGLUE, all
+
+AL, all
+
+
+
+!------------czwarta area ----------
+
+ALLSEL
+
+!NUMCMP, kp
+*get, maks, kp, 0, num, max
+
+CSYS, 0
+KSEL, s, loc, x, w+5
+
+*get, locdolny, kp, 0, mnloc, y
+KSEL, s, loc, y, locdolny
+*get, dolny, kp, 0, num, max
+
+KWPAVE, dolny
+CSYS, wp
+
+K, maks+1, 1, 0, 0
+
+*get, dolny2, kp, 0, num, max
+
+ALLSEL
+
+LSTR, dolny, dolny2
+LSTR, dolny2, dsrodkowy2
+
+LSEL, s, loc, x, 0, 1
+KWPAVE, dsrodkowy2 
+LSEL, r, loc, y, 0, locdolny
+
+LGLUE, all
+AL, all
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/eof
+
+!------------proba meshowa-----------
+
+ET, 1, LINK180
+ET, 2, SHELL41
+
+R, 1, PRZEKR	! -15% napiecia wstepnego
+!R, 2, 20
+
+MP, ex, 1, 8000		! [MPa] E wlokienek
+MP, nuxy, 1, 0.3
+MP, ex, 2, 210000 	! stalowe okladki
+MP, nuxy, 2, 0.3
+
+
+CSYS, 0
+
+LSLA, s
+LSEL, r, loc, x, w+5
+TYPE, 1
+MAT, 2
+ESIZE,, 1
+
+LMESH, all
+
+!------ prawa linia -----
+
+LSLA, a
+LSEL, r, loc, x, w+6
+
+ESIZE,, 100
+
+LMESH, all
+
+!---------- gorna i dolna linia -----
+
+LSLA, a
+LSEL, r, loc, y, 2*h
+
+ESIZE,, 10
+
+LMESH, all
+
+LSLA, a
+CSYS, wp
+
+LSEL, r, loc, y, 0
+
+LMESH, all
+
+!-------- mesh arei -----------
+
+TYPE, 2
+MSHAPE, 1, 2D
+
+SMRTSIZE, 9
+
+AMESH, all
+
+/eof
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KWPAVE, dolny
+K,maks+2, 1, 0, 0
+*get, dolny2, kp, 0, num, max
+
+ALLSEL
+
+LSTR, gorny, gorny2
+LSTR, dolny, dolny2
+LSTR, gorny2, dolny2
+
+CSYS, 0
+LSEL, s, loc, x, w+5, w+6
+
+LGLUE, all
+
+AL, all
+
+ALLSEL
+
+
+resume, okladka_conn, db
+
+

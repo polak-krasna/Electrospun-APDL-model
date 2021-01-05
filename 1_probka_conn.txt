@@ -1,0 +1,177 @@
+finish
+/clear
+
+/prep7
+
+w=50		!szerokosc probki [mm]
+h=12.5
+g=0.0185		!grubosc probki po OZ [mm]
+
+odl=g/30	!odleglosc miedzy wrstewkami
+war=g/10		!grubosc warstewki
+
+
+D=0.0003/2			!promien wlokna [mm]
+PRZEKR=3.14*D*D		!przekrój wlokna, który bedzie w REAL secie 1
+
+kp1=1
+kp2=2
+kp3=3
+
+conn = 2
+
+
+!################ WLOKNA ################
+
+BTOL, 10*E-5
+
+
+*do, j, 0, 10, 1			
+	
+	*do, i, 1, 110, 1		
+		
+
+		x1=0
+		x2=w
+		y1=rand(0,h)
+		y2=rand(0,h)
+		z1=rand(j*odl, j*odl+war)
+		z2=rand(j*odl, j*odl+war)
+
+		K, kp1, x1, y1, z1
+		K, kp2, x2, y2, z2
+		
+		
+		
+		
+
+		LSTR, kp1, kp2
+		
+		
+		
+
+		kp1=kp1+2
+		kp2=kp2+2
+		
+	
+	*enddo
+
+	
+	
+	j=j+1
+	kp1=kp1+220
+	kp2=kp2+220
+	
+
+
+*enddo
+
+!NUMCMP, all
+
+
+*get, fibres_amount, line, 0, count
+tyle=3*h/fibres_amount
+
+
+!----------- odznaczamy co 2 linie --------
+
+/eof
+
+
+LSEL, u, line,, 1, fibres_amount, conn
+
+LOVLAP, all
+
+ALLSEL
+
+
+
+!---------- stalowe przedluzenia ktore sie nie krzyzuja --------
+
+NUMMRG, kp
+
+SELTOL, 0.0000001
+
+NUMCMP, kp
+
+
+KSEL, s, loc, x, w
+*get, kpamount, kp, 0, count
+*get, lowest, kp, 0, mnloc, y
+lowest=lowest-1
+low=lowest
+*get, maksi, kp, 0, num, max
+
+kpk=maksi
+ALLSEL
+
+
+
+
+*do, k, 1, kpamount, 1
+	
+	
+	KSEL, s, loc, x, w
+	KSEL, u, loc, y, lowest, low
+	
+	
+	*get, low, kp, 0, mnloc, y
+	KSEL, r, loc, y, low
+	*get, punkt, kp, 0, num, min
+	
+	K, kpk+k, w+5, -h+tyle*k, 0
+	*get, punkt2, kp, 0, num, max
+	LSTR, punkt, punkt2
+	KSEL, s, kp,, punkt
+	LSLK, s
+	LGLUE, all
+	ALLSEL
+	
+
+
+*enddo
+
+
+
+
+
+
+
+!--------- polaczenie okladki linia i lglue----
+
+
+
+*get, dolnyloc, kp, 0, mnloc, y
+KSEL, s, loc, y, dolnyloc
+*get, dolny, kp, 0, num, min
+
+ALLSEL
+
+*get, gornyloc, kp, 0, mxloc, y
+KSEL, s, loc, y, gornyloc
+*get, gorny, kp, 0, num, max
+
+ALLSEL
+
+KSEL, s, kp,, dolny
+KSEL, a, kp,, gorny
+
+LSTR, dolny, gorny
+
+ALLSEL
+
+LSEL, s, loc, x, w, w+5
+
+
+!LGLUE, all
+LOVLAP, all
+
+ALLSEL
+
+
+save, probka_conn, db
+
+
+
+
+

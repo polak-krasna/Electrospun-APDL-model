@@ -1,0 +1,175 @@
+finish
+/clear
+
+/prep7
+
+resume, okladka_conn, db
+
+AGLUE, all
+
+!SELTOL, 0.000001  ! tolerance of selection, and it works :)
+
+
+!BTOL, 0.10E-10		! tolerance of Boolean operations
+
+!NUMCMP, line
+
+!---------------- MESH okladek -------
+
+ET, 1, LINK180
+ET, 2, SHELL41
+
+R, 1, PRZEKR, 0.15	! 15% napiecia wstepnego
+R, 2, 20
+
+MP, ex, 1, 8000		! [MPa] E wlokienek
+MP, nuxy, 1, 0.3
+MP, ex, 2, 210000 	! stalowe okladki
+MP, nuxy, 2, 0.3
+
+!------- mesh linii okladkowej lewej ---------
+
+CSYS, 0
+
+LSEL, s, loc, x, w+5
+
+
+TYPE, 1
+MAT, 2
+REAL, 2
+
+ESIZE,, 1
+
+LMESH, all
+
+
+
+!------------- mesh linii okladkowej prawej -----------
+
+LSEL, s, loc, x, w+6
+
+ESIZE,, 150
+LMESH, all
+
+
+!------------- mesh krotkich linii okladkowych -------
+
+!SELTOL, 0.02
+
+LSEL, s, loc, x, w+5, w+6
+
+ESIZE,, 10
+
+LMESH, all
+
+ALLSEL
+
+
+!------------ mesh arei ------------
+
+TYPE, 2
+MSHAPE, 1, 2D
+SMRTSIZE, 9
+
+AMESH, all
+
+
+!------- mesh wlokienek stalowych ---------
+
+TYPE, 1
+
+LSEL, s, loc, x, w, w+5
+LSEL, u, loc, x, w+5
+
+ESIZE,, 1
+LMESH, all
+
+
+
+!-------- mesh wlokienek polimerowych -----
+
+MAT, 1
+REAL, 1
+
+LSEL, s, loc, x, 0, w
+
+ESIZE,, 1
+LMESH, all
+
+!----------- losowe E ---------
+
+
+
+
+
+
+!------ mocowanie lewej strony ------
+
+NSEL, s, loc, x, 0
+
+D, all, all, 0		! odebranie wszystkich stopni swobody na lewej okladce
+
+ALLSEL
+
+
+
+!-------- zadanie przemieszczenia ----
+
+CSYS, 0
+
+NSEL, s, loc, x, w+6
+
+KWPAVE, srodkowy2
+
+CSYS, wp
+
+NSEL, r, loc, y, 0
+
+
+
+
+D, all, ux, 100
+
+ALLSEL
+
+D, all, uy, 0
+D, all, uz, 0
+
+
+NUMMRG, node
+NUMMRG, kp
+
+/eof
+
+
+
+
+
+
+
+
+
+
+
+/solu
+
+NLGEOM, on 	!wlacz duze odksztalcenia
+TIME, 5
+AUTOTS, off	! Specifies whether to use automatic time stepping or load stepping.
+NSUBST, 8
+OUTRES, all, all	! Controls the solution data written to the database.
+
+
+solve
+
+
+save, mesh_1010, db
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+finish
+/clear
+
+/prep7
+
+resume, mesh1010, db
+
+
+ESEL, s, mat,, 1	! selekcjonujemy elementy które maja material 1 (wlókienka)
+
+*get, ile, elem, 0, count	! wrzucamy do "ile" ilosc wyselekcjonowanych elementów
+
+*do, q, 1, ile, 1			! od 1 do "ile" co 1
+	*get, aknr, elem, 0, num, min	! wrzucamy do aknr najmniejszy numer elementu
+	ms1 = RAND(40, 50)	! 
+	ms2 = NINT(ms1)		! najblizsza liczba calkowita
+	ms= ms2*100		! wrzucamy do "ms" dowolna wartosc miedzy 6 a 10 GPa
+	md1 = RAND(20, 30)	! wrzucamy do "md" dowolna wartosc miedzy 200 a 300 nm
+	md2 = NINT(md1)
+	md=md2*0.00001/2
+	MP, ex, aknr, ms		! nowe wartosci E we wlasciwosciach materialowych
+	mdp=3.14*md*md	
+	napwst1=rand(-20, 20)	! losowe napiecie wstepne
+        napwst2=NINT(napwst1)
+	napwst=napwst2*0.01
+	R, aknr, mdp, napwst
+	EMODIF, aknr, MAT, aknr		! zmieniamy wlaciwosci materialowe istniejacego elementu
+	EMODIF, aknr, REAL, aknr
+	ESEL, u, elem,, aknr		! wywalamy z zestawu element juz zmieniony
+*enddo	
+
+ALLSEL
+
+
+/solu
+
+NLGEOM, on 	!wlacz duze odksztalcenia
+TIME, 10
+AUTOTS, off	! Specifies whether to use automatic time stepping or load stepping.
+NSUBST, 300
+OUTRES, all, all	! Controls the solution data written to the database.
+
+
+solve
+
+save, solved, db
